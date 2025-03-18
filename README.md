@@ -1,4 +1,4 @@
-# STM32 Serial Communication Protocol Library
+# ProtoFlow 项目
 
 ## 特性
 - 轻量级协议栈（<2KB Flash）
@@ -8,12 +8,13 @@
 - 状态机驱动解析（9种解析状态）
 - 全中断驱动设计（零阻塞）
 - 自动重同步机制
+- 适用于多种数据通信情况
 
 ## 快速开始
 ### 1. 添加文件到工程
 ```bash
 # 复制以下文件到STM32工程目录
-cp serial_protocol.h serial_protocol.c Drivers/SerialProtocol
+serial_protocol.h serial_protocol.c 
 ```
 
 ### 2. 协议配置（serial_protocol.h）
