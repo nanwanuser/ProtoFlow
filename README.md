@@ -65,7 +65,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   * @param  len    : 数据长度（0~MAX_DATA_LENGTH）
   * @retval 实际发送的数据包长度
   */
-uint16_t pack_data_transmit(uint8_t cmd, uint8_t *data, uint16_t len, uint8_t *buffer);
+uint16_t pack_data_transmit(uint8_t cmd, uint8_t *data, uint16_t len);
 ```
 
 ### 数据解析
@@ -104,7 +104,7 @@ void send_sensor_data(float temp, float humidity) {
     payload[2] = humi_raw >> 8;
     payload[3] = humi_raw & 0xFF;
     
-    pack_data(0x01, payload, sizeof(payload));  // 自动发送
+    pack_data_transmit(0x01, payload, sizeof(payload));  // 自动发送
 }
 ```
 ### 数据接收处理
