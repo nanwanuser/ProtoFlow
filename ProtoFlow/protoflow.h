@@ -32,6 +32,6 @@ void user_uart_transmit(uint8_t *data, uint16_t len);
 void user_package_handler(uint8_t cmd, uint8_t *data, uint16_t len);
 
 // 库函数接口 ------------------------------------------------------------------
-void serial_protocol_init(void);
+void protoflow_init(void);
 uint16_t pack_data_transmit(uint8_t cmd, uint8_t *data, uint16_t len);
 void parse_byte(uint8_t byte);

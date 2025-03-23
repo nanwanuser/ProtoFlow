@@ -5,7 +5,7 @@
   ******************************************************************************
   */
 
-#include "serial_protocol.h"
+#include "protoflow.h"
 #include <string.h>
 
 // 解析状态机状态定义
@@ -50,7 +50,7 @@ static uint16_t crc16(uint8_t *data, uint16_t len) {
     return crc;
 }
 
-void serial_protocol_init(void) {
+void protoflow_init(void) {
     memset(&ctx, 0, sizeof(ctx));
     ctx.state = STATE_WAIT_HEADER1;
 }
