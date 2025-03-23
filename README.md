@@ -19,7 +19,7 @@
 protoflow.h protoflow.c
 ```
 
-### 2. 协议配置（serial_protocol.h）
+### 2. 协议配置（protoflow.h）
 ```c
 // 帧结构配置
 #define FRAME_HEADER      0xAA55      // 2 字节帧头
@@ -34,7 +34,7 @@ void user_transmit(uint8_t *data, uint16_t len);  // 通信发送函数（支持
 ### 3. 示例代码集成（以串口为例）
 ```c
 // main.c
-#include "serial_protocol.h"
+#include "protoflow.h"
 
 int main(void) {
     // HAL 初始化
