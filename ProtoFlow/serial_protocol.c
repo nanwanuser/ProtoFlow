@@ -107,7 +107,7 @@ void parse_byte(uint8_t byte) {
     case STATE_WAIT_HEADER2:
         if(byte == (FRAME_HEADER & 0xFF)) {
             ctx.state = STATE_WAIT_LENGTH;
-            ctx.calc_crc = 0xFFFF; // 重置CRC
+            ctx.calc_crc = 0xFFFF; // 重置CRC（仅当 USE_CRC16 == 1 时使用）
         } else {
             ctx.state = STATE_WAIT_HEADER1;
         }
@@ -120,7 +120,7 @@ void parse_byte(uint8_t byte) {
         
     case STATE_WAIT_LENGTH_LOW:
         ctx.pkg_length |= byte;
-        if(ctx.pkg_length > MAX_DATA_LENGTH + 3) { // +3 for cmd + crc
+        if(ctx.pkg_length > MAX_DATA_LENGTH + 3) { // +3 for cmd + crc (if enabled)
             ctx.state = STATE_WAIT_HEADER1;
             return;
         }
@@ -136,10 +136,15 @@ void parse_byte(uint8_t byte) {
     case STATE_READ_DATA:
         ctx.data[ctx.data_index++] = byte;
         if(ctx.data_index >= ctx.pkg_length - 1) { // -1 for cmd
+#if USE_CRC16
             ctx.state = STATE_WAIT_CRC1;
+#else
+            ctx.state = STATE_WAIT_END1;
+#endif
         }
         break;
         
+#if USE_CRC16
     case STATE_WAIT_CRC1:
         ctx.recv_crc = byte << 8;
         ctx.state = STATE_WAIT_CRC2;
@@ -147,15 +152,14 @@ void parse_byte(uint8_t byte) {
         
     case STATE_WAIT_CRC2:
         ctx.recv_crc |= byte;
-#if USE_CRC16
         if(ctx.calc_crc != ctx.recv_crc) {
             // CRC错误处理
             ctx.state = STATE_WAIT_HEADER1;
             return;
         }
-#endif
         ctx.state = STATE_WAIT_END1;
         break;
+#endif
         
     case STATE_WAIT_END1:
         if(byte == ((FRAME_END >> 8) & 0xFF)) {
@@ -180,7 +184,7 @@ void parse_byte(uint8_t byte) {
 
 #if USE_CRC16
     // 更新CRC计算（从长度字段开始）
-    if(ctx.state >= STATE_WAIT_LENGTH && ctx.state <= STATE_WAIT_CRC2) {
+    if(ctx.state >= STATE_WAIT_LENGTH && ctx.state <= STATE_READ_DATA) {
         ctx.calc_crc ^= (uint16_t)byte << 8;
         for(int i=0; i<8; i++) {
             if(ctx.calc_crc & 0x8000)
